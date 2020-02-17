@@ -4,9 +4,10 @@ import matplotlib.pyplot as plt
 import csv
 import math
 
-norm = np.linalg.norm
 VIS = True
 PAUSETIME = .3
+
+norm = np.linalg.norm
 
 def normalize(v):
     return v / norm(v)
