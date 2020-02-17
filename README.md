@@ -1,5 +1,5 @@
 # Mini Project 1
- This is Peter Wu's 15464 Mini Project 1, a basic IK solver with Cyclic-Coordinate Descent(CCD) and Forward And Backward Reaching Inverse Kinematics(FABRIK).
+ This is Peter Wu's 15464 Mini Project 1, a basic IK solver with Cyclic-Coordinate Descent(CCD) and Forward And Backward Reaching Inverse Kinematics(FABRIK). The github link is https://github.com/Wuhao1627003/15464-Mini-1.
  In 15462, I already implemented Jacobian Transpose and Jacobian Pseudo-Inverse methods, so here I add 2 more methods into my toolbox: CCD and FABRIK.
  
  For this project, I started from scratch and used basic matplotlib 3d plotting to plot joints and chains. My main goal is to try several scenarios and compare how good these two methods are, in terms of runtime, no. iterations, and naturalness.
