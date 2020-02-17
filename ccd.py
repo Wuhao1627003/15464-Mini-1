@@ -5,8 +5,10 @@ import csv
 import math
 
 VIS = True
-PAUSETIME = .3
-mode = "list"
+PAUSETIME = 0.3
+mode = "tree"
+# read in constraints, ordered by joint index
+queries = [[6, -4, -2, 2, .6], [9, -3, 2, 1, .01]]
 
 norm = np.linalg.norm
 
@@ -99,9 +101,6 @@ if mode == "list":
     ax._axis3don = VIS
     fig.show()
 
-    # read in constraints, ordered by joint index
-    queries = [[12, 12, 15, 10, .006]]
-
     allMet = False
     totalTrials = 0
     while not allMet and totalTrials < 10:
@@ -138,15 +137,42 @@ if mode == "list":
                 ax._axis3don = VIS
                 fig.canvas.draw()
                 print("Unachievable")
-                plt.pause(10)
+                plt.pause(3)
                 exit()
+
+            for index in range(numJoints - 1):
+                ax.plot([joints[index][0], joints[index + 1][0]],
+                        [joints[index][1], joints[index + 1][1]],
+                        [joints[index][2], joints[index + 1][2]])
+
+            ax._axis3don = VIS
+            ax.set_xlim(0, 20)
+            ax.set_ylim(0, 20)
+            ax.set_zlim(0, 20)
+            fig.canvas.draw()
+            plt.pause(PAUSETIME)
+            ax.clear()
 
             trials = 0
             while norm(desiredPos - joints[endEffInd]) > threshold and trials < 1000:
-                # print(norm(desiredPos - joints[endEffInd]))
+                ax.set_title("trial " + str(trials) + " error: " +
+                             str(norm(desiredPos - joints[numJoints - 1])))
 
                 trials += 1
                 allMet = False
+
+                
+
+                for curInd in range(endEffInd - 1, -1, -1):
+                    desiredVec = normalize(desiredPos - joints[curInd])
+                    currentVec = normalize(
+                        joints[endEffInd] - joints[curInd])
+
+                    quaternions[curInd + 1] = quaMult(toQua(currentVec, desiredVec),
+                                                      quaternions[curInd + 1])
+
+                    # update all joints positions
+                    recalc(curInd + 1, numJoints)
 
                 for q in queries:
                     ax.plot([q[1]], [q[2]], [q[3]], 'r+')
@@ -164,22 +190,13 @@ if mode == "list":
                 plt.pause(PAUSETIME)
                 ax.clear()
 
-                for curInd in range(endEffInd - 1, -1, -1):
-                    desiredVec = normalize(desiredPos - joints[curInd])
-                    currentVec = normalize(
-                        joints[endEffInd] - joints[curInd])
-
-                    quaternions[curInd + 1] = quaMult(toQua(currentVec, desiredVec),
-                                                      quaternions[curInd + 1])
-
-                    # update all joints positions
-                    recalc(curInd + 1, numJoints)
-
             # print(norm(desiredPos - joints[endEffInd]))
 
             if trials == 1000:
                 print("More than 1000 trials. Please increase your threshold.")
                 exit()
+            elif trials != 0:
+                print("trials: " + str(trials))
 
     plt.close(fig)
     exit()
@@ -218,8 +235,6 @@ elif mode == "tree":
     ax = fig.gca(projection='3d')
     ax._axis3don = VIS
     fig.show()
-    # read in constraints, ordered by joint index
-    queries = [[6, -4, 2, 1, .06]]
 
     allMet = False
     totalTrials = 0
@@ -263,7 +278,8 @@ elif mode == "tree":
 
             trials = 0
             while norm(desiredPos - joints[endEffInd][1:]) > threshold and trials < 1000:
-                # print(norm(desiredPos - joints[endEffInd]))
+                ax.set_title("trial " + str(trials) + " error: " +
+                             str(norm(desiredPos - joints[endEffInd][1:])))
 
                 trials += 1
                 allMet = False

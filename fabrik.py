@@ -5,7 +5,8 @@ import csv
 import math
 
 VIS = True
-PAUSETIME = .3
+PAUSETIME = 1
+query = [10, 10, 30, .1]
 
 norm = np.linalg.norm
 
@@ -33,9 +34,6 @@ ax = fig.gca(projection='3d')
 ax._axis3don = VIS
 fig.show()
 
-# read in constraints, ordered by joint index
-query = [12, 15, 10, .006]
-
 desiredPos = np.array(query[:-1])
 threshold = query[-1]
 
@@ -57,7 +55,7 @@ if norm(desiredPos - base) > np.sum(lens):
     ax._axis3don = VIS
     fig.canvas.draw()
     print("Unachievable")
-    plt.pause(10)
+    plt.pause(3)
     exit()
 
 ax.plot([query[0]], [query[1]], [query[2]], 'r+')
@@ -78,7 +76,7 @@ ax.clear()
 
 trials = 0
 while norm(desiredPos - joints[numJoints - 1]) > threshold and trials < 1000:
-    # print(norm(desiredPos - joints[numJoints - 1]))
+    ax.set_title("trial " + str(trials) + " error: " + str(norm(desiredPos - joints[numJoints - 1])))
 
     trials += 1
 
@@ -118,6 +116,8 @@ while norm(desiredPos - joints[numJoints - 1]) > threshold and trials < 1000:
 if trials == 1000:
     print("More than 1000 trials. Please increase your threshold.")
     exit()
+else:
+    print("trials: " + str(trials))
 
 plt.close(fig)
 exit()
