@@ -120,7 +120,8 @@
 
   Tutorial:
   
-    *.pdf algorithm descriptions
+    CCD.pdf CCD algorithm using euler angles
+    FABRIK.pdf FABRIK algorithm
 
   
 ## Running
